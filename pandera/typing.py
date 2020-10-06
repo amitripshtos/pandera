@@ -1,7 +1,7 @@
 """Typing definitions and helpers."""
 # pylint:disable=abstract-method,disable=too-many-ancestors
 import sys
-from typing import Generic, Optional, Type, TypeVar
+from typing import Generic, Optional, Type, TypeVar, TYPE_CHECKING
 
 import pandas as pd
 import typing_inspect
@@ -56,16 +56,22 @@ GenericDtype = TypeVar(  # type: ignore
 Schema = TypeVar("Schema", bound="SchemaModel")  # type: ignore
 
 
+# pylint:disable=too-few-public-methods
 class Index(pd.Index, Generic[GenericDtype]):
     """Representation of pandas.Index."""
 
 
-class Series(pd.Series, Generic[GenericDtype]):  # type: ignore # pylint:disable=too-many-ancestors
+# pylint:disable=too-many-ancestors,too-few-public-methods
+class Series(pd.Series, Generic[GenericDtype]):  # type: ignore
     """Representation of pandas.Series."""
 
 
-class DataFrame(pd.DataFrame, Generic[Schema]):
-    """Representation of pandas.DataFrame."""
+if TYPE_CHECKING:
+    DataFrame = pd.DataFrame
+else:
+    # pylint:disable=too-few-public-methods
+    class DataFrame(pd.DataFrame, Generic[Schema]):
+        """Representation of pandas.DataFrame."""
 
 
 class AnnotationInfo:  # pylint:disable=too-few-public-methods
